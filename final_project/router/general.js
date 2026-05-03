@@ -42,7 +42,14 @@ public_users.get('/',function (req, res) {
 public_users.get('/isbn/:isbn',function (req, res) {
   //Write your code here
   const isbn = req.params.isbn;
-  return res.send(books[isbn]);
+
+  let promiseGetBookByISBN = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("Promise resolved");
+    },2000)}).then((resp) => {
+    return res.send(books[isbn]);
+  });
+  
  });
   
 // Get book details based on author
@@ -52,7 +59,13 @@ public_users.get('/author/:author',function (req, res) {
   const filtered_books = Object.values(books).filter(
     book => book.author.toLowerCase() === authorName.toLowerCase()
   );
-  return res.send(filtered_books[0]);
+  let promiseGetBookByAuthor = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("Promise resolved");
+    },2000)}).then((resp) => {
+    return res.send(filtered_books[0]);
+  });
+  
 });
 
 // Get all books based on title
@@ -62,7 +75,13 @@ public_users.get('/title/:title',function (req, res) {
   const filtered_books = Object.values(books).filter(
     book => book.title.toLowerCase() === title.toLowerCase()
   );
-  return res.send(filtered_books[0]);
+  let promiseGetBookByTitle = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("Promise resolved");
+    },2000)}).then((resp) => {
+    return res.send(filtered_books[0]);
+  });
+  
 });
 
 //  Get book review
@@ -71,7 +90,13 @@ public_users.get('/review/:isbn',function (req, res) {
   const isbn = parseInt(req.params.isbn);
   const bookReviews = books[isbn].reviews;
 
-  return res.send(bookReviews);
+  let promiseGetBookByTitle = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("Promise resolved");
+    },2000)}).then((resp) => {
+    return res.send(bookReviews);
+  });
+  
 });
 
 module.exports.general = public_users;
