@@ -5,8 +5,18 @@ const regd_users = express.Router();
 
 let users = [];
 
-const isValid = (username)=>{ //returns boolean
-//write code to check is the username is valid
+const isValid = (username) => { //returns boolean
+  //write code to check is the username is valid
+  // Filter the users array for any user with the same username
+    let userswithsamename = users.filter((user) => {
+        return user.username === username;
+    });
+    // Return true if any user with the same username is found, otherwise false
+    if (userswithsamename.length > 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 // Check if the user with the given username and password exists
@@ -63,6 +73,13 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 });
 
 regd_users.delete("/auth/review/:isbn", (req, res) => {
+    const isbn = req.params.isbn;
+    const username = req.session.authorization.username;
+
+    delete books[isbn].reviews[username];
+
+    return res.send(`The user ${username} review was deleted successfully!`);
+
 
 });
 
