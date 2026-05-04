@@ -27,85 +27,96 @@ public_users.post("/register", (req,res) => {
 });
   
 
-// Get the book list available in the shop
-// Task 10
-public_users.get('/', async function (req, res) {
-  try {
-    const getBooks = new Promise((resolve) => {
-      resolve(books);
-    });
 
-    const result = await getBooks;
-    res.send(JSON.stringify(result, null, 4));
+// Task 10: Get all books list 
+public_users.get('/', async (req, res) => {
+  try {
+    const response = await axios.get(
+      "https://www.googleapis.com/books/v1/volumes?q=subject:fiction"
+    );
+
+    return res.status(200).json(response.data.items);
+
   } catch (error) {
-    res.status(500).json({ message: "Error fetching books" });
+    return res.status(500).json({
+      message: "Error fetching books",
+      error: error.message
+    });
   }
 });
 
-// Get book details based on ISBN
-// Task 11
-public_users.get('/isbn/:isbn', async function (req, res) {
+
+// Task 11: Get book by ISBN
+public_users.get('/isbn/:isbn', async (req, res) => {
   try {
     const isbn = req.params.isbn;
 
-    const getBookByISBN = new Promise((resolve, reject) => {
-      const book = books[isbn];
+    const response = await axios.get(
+      `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`
+    );
 
-      if (book) {
-        resolve(book);
-      } else {
-        reject("Book not found");
-      }
-    });
+    if (response.data.totalItems === 0) {
+      return res.status(404).json({ message: "Book not found" });
+    }
 
-    const result = await getBookByISBN;
-    res.send(JSON.stringify(result, null, 4));
+    return res.status(200).json(response.data.items);
+
   } catch (error) {
-    res.status(404).json({ message: error });
+    return res.status(500).json({
+      message: "Error fetching book by ISBN",
+      error: error.message
+    });
   }
 });
-  
-// Get book details based on author
-// Task 12
-public_users.get('/author/:author', async function (req, res) {
+
+
+// Task 12: Get books by author
+public_users.get('/author/:author', async (req, res) => {
   try {
     const author = req.params.author;
 
-    const getBooksByAuthor = new Promise((resolve) => {
-      const result = Object.values(books).filter(
-        book => book.author.toLowerCase() === author.toLowerCase()
-      );
+    const response = await axios.get(
+      `https://www.googleapis.com/books/v1/volumes?q=inauthor:${author}`
+    );
 
-      resolve(result);
-    });
+    if (response.data.totalItems === 0) {
+      return res.status(404).json({ message: "No books found for this author" });
+    }
 
-    const result = await getBooksByAuthor;
-    res.send(JSON.stringify(result, null, 4));
+    return res.status(200).json(response.data.items);
+
   } catch (error) {
-    res.status(500).json({ message: "Error fetching books by author" });
+    return res.status(500).json({
+      message: "Error fetching books by author",
+      error: error.message
+    });
   }
 });
 
-// Get all books based on title
-// Task 13
-public_users.get('/title/:title', async function (req, res) {
+
+// Task 13: Get books by title
+public_users.get('/title/:title', async (req, res) => {
   try {
     const title = req.params.title;
 
-    const getBooksByTitle = new Promise((resolve) => {
-      const result = Object.values(books).filter(
-        book => book.title.toLowerCase() === title.toLowerCase()
-      );
+    const response = await axios.get(
+      `https://www.googleapis.com/books/v1/volumes?q=intitle:${title}`
+    );
 
-      resolve(result);
-    });
+    if (response.data.totalItems === 0) {
+      return res.status(404).json({ message: "No books found for this title" });
+    }
 
-    const result = await getBooksByTitle;
-    res.send(JSON.stringify(result, null, 4));
+    return res.status(200).json(response.data.items);
+
   } catch (error) {
-    res.status(500).json({ message: "Error fetching books by title" });
+    return res.status(500).json({
+      message: "Error fetching books by title",
+      error: error.message
+    });
   }
 });
+
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
