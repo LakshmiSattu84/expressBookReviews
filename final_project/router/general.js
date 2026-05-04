@@ -11,6 +11,7 @@ public_users.post("/register", (req,res) => {
     const password = req.body.password;
 
     // Check if both username and password are provided
+    
     if (username && password) {
         // Check if the user does not already exist
         if (!isValid(username)) {
@@ -28,9 +29,10 @@ public_users.post("/register", (req,res) => {
   
 
 
-// Task 10: Get all books list 
+// Task 10: Get all books list from Google Books API
 public_users.get('/', async (req, res) => {
   try {
+    // Fetch books from external Google Books API 
     const response = await axios.get(
       "https://www.googleapis.com/books/v1/volumes?q=subject:fiction"
     );
@@ -38,6 +40,8 @@ public_users.get('/', async (req, res) => {
     return res.status(200).json(response.data.items);
 
   } catch (error) {
+    // Handle errors while fetching books
+
     return res.status(500).json({
       message: "Error fetching books",
       error: error.message
@@ -51,10 +55,12 @@ public_users.get('/isbn/:isbn', async (req, res) => {
   try {
     const isbn = req.params.isbn;
 
+    // Fetch book details from external Google Books API using ISBN
     const response = await axios.get(
       `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`
     );
 
+    // Check if any book is found with the given ISBN
     if (response.data.totalItems === 0) {
       return res.status(404).json({ message: "Book not found" });
     }
@@ -62,6 +68,8 @@ public_users.get('/isbn/:isbn', async (req, res) => {
     return res.status(200).json(response.data.items);
 
   } catch (error) {
+    // Handle errors while fetching book by ISBN
+
     return res.status(500).json({
       message: "Error fetching book by ISBN",
       error: error.message
@@ -75,10 +83,12 @@ public_users.get('/author/:author', async (req, res) => {
   try {
     const author = req.params.author;
 
+    // Fetch books from external Google Books API using author name
     const response = await axios.get(
       `https://www.googleapis.com/books/v1/volumes?q=inauthor:${author}`
     );
 
+    // Check if any books are found for the given author
     if (response.data.totalItems === 0) {
       return res.status(404).json({ message: "No books found for this author" });
     }
@@ -86,6 +96,8 @@ public_users.get('/author/:author', async (req, res) => {
     return res.status(200).json(response.data.items);
 
   } catch (error) {
+    // Handle errors while fetching books by author
+
     return res.status(500).json({
       message: "Error fetching books by author",
       error: error.message
@@ -99,10 +111,13 @@ public_users.get('/title/:title', async (req, res) => {
   try {
     const title = req.params.title;
 
+    // Fetch books from external Google Books API using book title
+
     const response = await axios.get(
       `https://www.googleapis.com/books/v1/volumes?q=intitle:${title}`
     );
 
+    // Check if any books are found for the given title
     if (response.data.totalItems === 0) {
       return res.status(404).json({ message: "No books found for this title" });
     }
@@ -110,6 +125,8 @@ public_users.get('/title/:title', async (req, res) => {
     return res.status(200).json(response.data.items);
 
   } catch (error) {
+    // Handle errors while fetching books by title
+
     return res.status(500).json({
       message: "Error fetching books by title",
       error: error.message
@@ -118,7 +135,7 @@ public_users.get('/title/:title', async (req, res) => {
 });
 
 
-//  Get book review
+//  Get book review by ISBN
 public_users.get('/review/:isbn',function (req, res) {
   //Write your code here
   const isbn = parseInt(req.params.isbn);
